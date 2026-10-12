@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelas X-10 | SMAN 2 Cikampek - Garden Edition</title>
+    <!-- Google Fonts & Tailwind CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        garden: {
+                            50: '#f4f7f4',
+                            100: '#e5ede5',
+                            200: '#c8dac8',
+                            300: '#9bc09b',
+                            500: '#4a7c59',
+                            600: '#3a6246',
+                            700: '#2f4f38',
+                            800: '#233c2a',
+                            900: '#1a2e1f',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3a6246">
+    <style>
+        body {
+            background-color: #f4f7f4;
+            background-image: radial-gradient(#c8dac8 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="text-garden-950 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-garden-900/80 backdrop-blur-md p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 border border-garden-200 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-garden-100 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="text-center mb-8">
+                <span class="inline-block px-3 py-1 bg-garden-100 text-garden-700 text-xs font-semibold rounded-full mb-3">🌿 SMAN 2 CIKAMPEK</span>
+                <h1 class="font-serif text-3xl font-bold text-garden-900">Kelas X-10</h1>
+                <p class="text-sm text-gray-500 mt-1">Silakan masuk menggunakan nama lengkap & password Anda</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-garden-800 uppercase tracking-wider mb-1">Nama Lengkap Siswa / Admin</label>
+                    <input type="text" id="login-name" required placeholder="Contoh: MUHAMAD FABIAN ALFAIZI atau ADMIN" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-garden-500 focus:outline-none text-sm uppercase">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-garden-800 uppercase tracking-wider mb-1">Password</label>
+                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-garden-500 focus:outline-none text-sm">
+                    <p class="text-[11px] text-gray-400 mt-1">Siswa: <code class="bg-gray-100 px-1 py-0.5 rounded font-mono text-garden-600"></code> | Admin: <code class="bg-gray-100 px-1 py-0.5 rounded font-mono text-garden-600"></code></p>
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-garden-600 hover:bg-garden-700 text-white font-semibold rounded-xl shadow-lg shadow-garden-600/30 transition duration-200 text-sm">
+                    Masuk ke Gerbang Taman 🍃
+                </button>
+            </form>
+            <div id="login-error" class="hidden mt-4 p-3 bg-red-50 text-red-600 text-xs rounded-xl text-center font-medium"></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="main-app" class="hidden flex-1 flex flex-col">
+        <!-- HEADER & NAVBAR -->
+        <header class="bg-white/80 backdrop-blur-md border-b border-garden-200 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-garden-600 flex items-center justify-center text-white font-serif font-bold text-xl shadow-md">🌱</div>
+                    <div>
+                        <span class="text-xs font-bold tracking-wider text-garden-600 uppercase">SMAN 2 CIKAMPEK</span>
+                        <h2 class="font-serif text-lg font-bold text-garden-900 leading-tight">Kelas X-10 Garden</h2>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
+                    <button onclick="switchTab('beranda')" class="nav-btn px-3.5 py-2 rounded-xl text-garden-700 bg-garden-100 transition" data-target="beranda">Beranda</button>
+                    <button onclick="switchTab('anggota')" class="nav-btn px-3.5 py-2 rounded-xl text-gray-600 hover:text-garden-700 hover:bg-garden-50 transition" data-target="anggota">Anggota</button>
+                    <button onclick="switchTab('piket')" class="nav-btn px-3.5 py-2 rounded-xl text-gray-600 hover:text-garden-700 hover:bg-garden-50 transition" data-target="piket">Piket</button>
+                    <button onclick="switchTab('jadwal')" class="nav-btn px-3.5 py-2 rounded-xl text-gray-600 hover:text-garden-700 hover:bg-garden-50 transition" data-target="jadwal">Jadwal</button>
+                    <button onclick="switchTab('absen')" class="nav-btn px-3.5 py-2 rounded-xl text-gray-600 hover:text-garden-700 hover:bg-garden-50 transition" data-target="absen">Absen</button>
+                    <button onclick="switchTab('tugas')" class="nav-btn px-3.5 py-2 rounded-xl text-gray-600 hover:text-garden-700 hover:bg-garden-50 transition" data-target="tugas">Tugas</button>
+                    <button onclick="switchTab('kas')" class="nav-btn px-3.5 py-2 rounded-xl text-gray-600 hover:text-garden-700 hover:bg-garden-50 transition" data-target="kas">Kas Kelas</button>
+                    <button onclick="switchTab('galeri')" class="nav-btn px-3.5 py-2 rounded-xl text-gray-600 hover:text-garden-700 hover:bg-garden-50 transition" data-target="galeri">Galeri</button>
+                    <button id="admin-menu-btn" onclick="switchTab('admin')" class="hidden nav-btn px-3.5 py-2 rounded-xl text-amber-700 bg-amber-50 hover:bg-amber-100 transition font-semibold" data-target="admin">⚙️ Admin</button>
+                </nav>
+                <div class="flex items-center space-x-3">
+                    <span id="user-greeting" class="text-xs font-semibold bg-garden-50 text-garden-700 px-3 py-1.5 rounded-full border border-garden-200"></span>
+                    <button onclick="logout()" class="text-xs text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-xl font-medium transition">Keluar</button>
+                </div>
+            </div>
+            <!-- Mobile Navigation -->
+            <div class="md:hidden flex overflow-x-auto px-4 py-2 border-t border-gray-100 space-x-2 bg-white">
+                <button onclick="switchTab('beranda')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-garden-100 text-garden-700" data-target="beranda">Beranda</button>
+                <button onclick="switchTab('anggota')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-gray-600" data-target="anggota">Anggota</button>
+                <button onclick="switchTab('piket')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-gray-600" data-target="piket">Piket</button>
+                <button onclick="switchTab('jadwal')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-gray-600" data-target="jadwal">Jadwal</button>
+                <button onclick="switchTab('absen')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-gray-600" data-target="absen">Absen</button>
+                <button onclick="switchTab('tugas')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-gray-600" data-target="tugas">Tugas</button>
+                <button onclick="switchTab('kas')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-gray-600" data-target="kas">Kas</button>
+                <button onclick="switchTab('galeri')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-gray-600" data-target="galeri">Galeri</button>
+                <button id="admin-menu-btn-mob" onclick="switchTab('admin')" class="hidden nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-amber-700 bg-amber-50" data-target="admin">⚙️ Admin</button>
+            </div>
+        </header>
+
+        <!-- CONTENT CONTAINER -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- TAB: BERANDA -->
+            <section id="tab-beranda" class="tab-content space-y-8">
+                <!-- HERO BANNER -->
+                <div class="relative rounded-3xl bg-gradient-to-br from-garden-800 to-garden-900 text-white p-8 md:p-12 overflow-hidden shadow-xl">
+                    <div class="absolute right-0 bottom-0 opacity-10 text-9xl font-serif translate-x-10 translate-y-10">🌿</div>
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="inline-block px-3.5 py-1 bg-white/10 backdrop-blur-md text-garden-200 text-xs font-semibold rounded-full mb-4">Tahun Ajaran 2026/2027</span>
+                        <h1 class="font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight">Selamat Datang di Website Kelas X-10</h1>
+                        <p class="text-garden-100 text-sm md:text-base leading-relaxed mb-6">Website resmi kelas bertema alam & kebersamaan SMAN 2 Cikampek[cite: 1, 2].</p>
+                        <div class="flex flex-wrap gap-4 text-xs font-semibold">
+                            <div class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10">👥 44 Siswa Total[cite: 1]</div>
+                            <div class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10">👩‍🏫 Wali Kelas: Meti Nurohmawati, S.Sn.[cite: 1]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RINGKASAN SALDO PERSONAL SISWA -->
+                <div id="personal-dashboard" class="bg-gradient-to-r from-garden-600 to-garden-700 rounded-3xl p-6 md:p-8 text-white shadow-md border border-garden-500">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/20 pb-4 mb-4">
+                        <div>
+                            <span class="text-xs uppercase tracking-wider text-garden-200 font-semibold">Ringkasan Uang Kas Saya</span>
+                            <h3 id="personal-student-name" class="font-serif text-2xl font-bold mt-1">Nama Siswa</h3>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-right">
+                            <span class="text-xs text-garden-200 block font-medium">Total Uang Kas Terbayar</span>
+                            <span id="personal-total-paid" class="text-2xl font-bold font-mono text-amber-300">Rp 0</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-semibold text-garden-200 uppercase mb-3">Catatan Transaksi Saya:</h4>
+                        <div id="personal-history-container" class="space-y-2 max-h-40 overflow-y-auto pr-2 text-xs">
+                            <p class="text-garden-200 italic">Memuat data pembayaran Anda...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STRUKTUR KELAS -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-garden-200">
+                    <h3 class="font-serif text-xl font-bold text-garden-900 mb-6 flex items-center gap-2">
+                        <span>🌳</span> Struktur Organisasi Kelas X-10
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="p-4 rounded-2xl bg-garden-50 border border-garden-100 text-center">
+                            <span class="text-xs text-garden-600 font-semibold uppercase">Wali Kelas</span>
+                            <h4 class="font-bold text-garden-900 mt-1">Meti Nurohmawati, S.Sn.[cite: 1]</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-garden-50 border border-garden-100 text-center">
+                            <span class="text-xs text-garden-600 font-semibold uppercase">Ketua Kelas</span>
+                            <h4 class="font-bold text-garden-900 mt-1">Muhamad Fabian Alfaizi[cite: 1]</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-garden-50 border border-garden-100 text-center">
+                            <span class="text-xs text-garden-600 font-semibold uppercase">Wakil Ketua Kelas</span>
+                            <h4 class="font-bold text-garden-900 mt-1">Hirzan Nazhir Muzhaffar</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-garden-50 border border-garden-100 text-center">
+                            <span class="text-xs text-garden-600 font-semibold uppercase">Pengurus Kelas</span>
+                            <h4 class="font-bold text-garden-900 mt-1">Tim X-10 Solid</h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: ANGGOTA KELAS -->
+            <section id="tab-anggota" class="tab-content hidden space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                    <div>
+                        <h3 class="font-serif text-xl font-bold text-garden-900">Daftar Anggota Kelas X-10</h3>
+                        <p class="text-xs text-gray-500 mt-1">Total 44 Peserta Didik (14 Laki-laki, 30 Perempuan)[cite: 1]</p>
+                    </div>
+                    <input type="text" id="search-anggota" placeholder="Cari nama siswa..." onkeyup="filterAnggota()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-garden-500 focus:outline-none w-full md:w-64">
+                </div>
+                <div class="bg-white rounded-3xl shadow-sm border border-garden-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-garden-50 text-garden-800 uppercase text-xs tracking-wider border-b border-garden-100">
+                                    <th class="p-4 font-semibold">No</th>
+                                    <th class="p-4 font-semibold">NIS / NISN</th>
+                                    <th class="p-4 font-semibold">Nama Siswa</th>
+                                    <th class="p-4 font-semibold">L/P</th>
+                                </tr>
+                            </thead>
+                            <tbody id="anggota-table-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: JADWAL PIKET -->
+            <section id="tab-piket" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                    <h3 class="font-serif text-xl font-bold text-garden-900 mb-1">🧹 Jadwal Piket Kebersihan</h3>
+                    <p class="text-xs text-gray-500">Piket harian kebersihan kelas X-10 SMAN 2 Cikampek.</p>
+                </div>
+                <div id="piket-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <!-- TAB: JADWAL PELAJARAN -->
+            <section id="tab-jadwal" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                    <h3 class="font-serif text-xl font-bold text-garden-900 mb-1">📅 Jadwal Pelajaran Kelas X-10</h3>
+                    <p class="text-xs text-gray-500">Berdasarkan aSc Timetables SMAN 2 Cikampek[cite: 2].</p>
+                </div>
+                <div id="jadwal-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <!-- TAB: ABSEN HARIAN -->
+            <section id="tab-absen" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h3 class="font-serif text-xl font-bold text-garden-900">📝 Rekap Absen Harian</h3>
+                        <p class="text-xs text-gray-500 mt-1">Status kehadiran siswa kelas X-10.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="date" id="absen-date" class="px-4 py-2 rounded-xl border border-gray-200 text-sm">
+                        <button onclick="loadAbsenData()" class="px-4 py-2 bg-garden-600 hover:bg-garden-700 text-white text-sm font-semibold rounded-xl">Muat</button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3xl shadow-sm border border-garden-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-garden-50 text-garden-800 uppercase text-xs tracking-wider border-b border-garden-100">
+                                    <th class="p-4">No</th>
+                                    <th class="p-4">Nama Siswa</th>
+                                    <th class="p-4">Status Kehadiran</th>
+                                    <th class="p-4">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="absen-table-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: INFORMASI TUGAS -->
+            <section id="tab-tugas" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-serif text-xl font-bold text-garden-900">📚 Informasi & Pengumuman Tugas</h3>
+                        <p class="text-xs text-gray-500 mt-1">Dapatkan notifikasi langsung ke HP saat ada pengumuman tugas baru.</p>
+                    </div>
+                    <button onclick="requestNotificationPermission()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-md transition">🔔 Aktifkan Notifikasi HP</button>
+                </div>
+                <div id="tugas-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+            </section>
+
+            <!-- TAB: KAS KELAS -->
+            <section id="tab-kas" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-br from-garden-700 to-garden-800 text-white p-6 rounded-3xl shadow-lg flex flex-col justify-center">
+                        <span class="text-xs uppercase tracking-wider text-garden-200 font-semibold">Total Saldo Kas Masuk</span>
+                        <h2 id="kas-total-saldo" class="font-serif text-3xl font-bold mt-2">Rp 0</h2>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200 md:col-span-2 flex flex-col justify-center">
+                        <h3 class="font-serif text-lg font-bold text-garden-900">💡 Transparansi Keuangan</h3>
+                        <p class="text-xs text-gray-500 mt-1">Data ditarik secara real-time dari Sheet Transaksi Google Spreadsheet.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3xl shadow-sm border border-garden-200 overflow-hidden">
+                    <div class="p-6 border-b border-garden-100 flex justify-between items-center">
+                        <h4 class="font-serif font-bold text-garden-900">Riwayat Transaksi Kas Seluruh Siswa</h4>
+                        <button onclick="loadKasData()" class="text-xs bg-garden-100 text-garden-700 px-3 py-1.5 rounded-xl font-semibold">🔄 Refresh</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead>
+                                <tr class="bg-garden-50 text-garden-800 uppercase tracking-wider border-b border-garden-100">
+                                    <th class="p-3">Tanggal</th>
+                                    <th class="p-3">Nama Siswa</th>
+                                    <th class="p-3">Jenis</th>
+                                    <th class="p-3">Jumlah</th>
+                                    <th class="p-3">Keterangan</th>
+                                    <th class="p-3 text-right">Total Paid</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kas-table-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: GALERI KELAS -->
+            <section id="tab-galeri" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                    <h3 class="font-serif text-xl font-bold text-garden-900 mb-1">📸 Galeri Kegiatan Kelas X-10</h3>
+                    <p class="text-xs text-gray-500">Momen kebersamaan, foto, dan video kegiatan kelas.</p>
+                </div>
+                <div id="galeri-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <!-- TAB: ADMIN PANEL -->
+            <section id="tab-admin" class="tab-content hidden space-y-6">
+                <div class="bg-amber-50 border border-amber-200 p-6 rounded-3xl">
+                    <h3 class="font-serif text-xl font-bold text-amber-900 mb-2">⚙️ Panel Admin X-10</h3>
+                    <p class="text-xs text-amber-700">Atur Jadwal, Piket, Upload Foto Galeri, Tugas, dan Catat Kas ke Spreadsheet & Firebase.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Catat Kas ke Spreadsheet -->
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                        <h4 class="font-serif font-bold text-garden-900 mb-4">💰 Catat Kas & Kirim ke Spreadsheet</h4>
+                        <form id="admin-kas-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Pilih Siswa</label>
+                                <select id="admin-kas-student" required class="w-full px-4 py-2.5 rounded-xl border text-sm"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Jenis Transaksi</label>
+                                <select id="admin-kas-type" class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                                    <option value="Iuran Kas">Iuran Kas (Masuk)</option>
+                                    <option value="Pengeluaran">Pengeluaran (Keluar)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Jumlah (Rp)</label>
+                                <input type="number" id="admin-kas-amount" required placeholder="5000" class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Keterangan</label>
+                                <input type="text" id="admin-kas-desc" required placeholder="Iuran Minggu ke-1" class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Tanggal</label>
+                                <input type="date" id="admin-kas-date" required class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <button type="submit" id="btn-submit-kas" class="w-full py-3 bg-garden-600 hover:bg-garden-700 text-white font-semibold rounded-xl text-sm transition">Simpan ke Spreadsheet 📊</button>
+                        </form>
+                    </div>
+
+                    <!-- Buat Tugas -->
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                        <h4 class="font-serif font-bold text-garden-900 mb-4">📢 Buat Tugas Baru & Kirim Notifikasi</h4>
+                        <form id="admin-tugas-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Mata Pelajaran</label>
+                                <input type="text" id="admin-tugas-mapel" required placeholder="Informatika" class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Deskripsi Tugas</label>
+                                <textarea id="admin-tugas-desc" required rows="2" placeholder="Detail..." class="w-full px-4 py-2.5 rounded-xl border text-sm"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Deadline</label>
+                                <input type="text" id="admin-tugas-deadline" required placeholder="Kamis, 15 Okt 2026" class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl text-sm transition shadow-md">Publikasikan 📲</button>
+                        </form>
+                    </div>
+
+                    <!-- Update Jadwal Pelajaran -->
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                        <h4 class="font-serif font-bold text-garden-900 mb-4">📅 Ubah Jadwal Pelajaran</h4>
+                        <form id="admin-jadwal-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Hari</label>
+                                <select id="admin-jadwal-hari" class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                                    <option value="Senin">Senin</option>
+                                    <option value="Selasa">Selasa</option>
+                                    <option value="Rabu">Rabu</option>
+                                    <option value="Kamis">Kamis</option>
+                                    <option value="Jum'at">Jum'at</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Daftar Mapel (Pisahkan koma)</label>
+                                <input type="text" id="admin-jadwal-mapel" required placeholder="Cultural Arts, Sundanese Language, ..." class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-garden-600 hover:bg-garden-700 text-white font-semibold rounded-xl text-sm transition">Simpan Jadwal</button>
+                        </form>
+                    </div>
+
+                    <!-- Upload Galeri Langsung dari HP/Laptop -->
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-garden-200">
+                        <h4 class="font-serif font-bold text-garden-900 mb-4">📸 Upload Foto Galeri</h4>
+                        <form id="admin-galeri-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Judul Kegiatan</label>
+                                <input type="text" id="admin-galeri-title" required placeholder="Kerja Bakti Taman" class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Pilih File Foto</label>
+                                <input type="file" id="admin-galeri-file" accept="image/*" required class="w-full px-4 py-2 rounded-xl border text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-garden-100 file:text-garden-700 hover:file:bg-garden-200">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Deskripsi Singkat</label>
+                                <input type="text" id="admin-galeri-desc" required placeholder="Merawat tanaman..." class="w-full px-4 py-2.5 rounded-xl border text-sm">
+                            </div>
+                            <button type="submit" id="btn-upload-galeri" class="w-full py-3 bg-garden-600 hover:bg-garden-700 text-white font-semibold rounded-xl text-sm transition">Upload Foto 📸</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-white border-t border-garden-200 py-6 mt-12 text-center text-xs text-gray-500">
+            <p>© 2026 Kelas X-10 SMAN 2 Cikampek • Garden Edition 🌿</p>
+        </footer>
+    </div>
+
+    <!-- FIREBASE & APP LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoY19ab3kk_4KOO-vETqifdpmZ6BjG5as",
+            authDomain: "website-kelas-70e2a.firebaseapp.com",
+            projectId: "website-kelas-70e2a",
+            storageBucket: "website-kelas-70e2a.firebasestorage.app",
+            messagingSenderId: "899601546416",
+            appId: "1:899601546416:web:d07c0a934390b3091a8f75",
+            measurementId: "G-W3RVXLE345"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // URL Web App Google Apps Script
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_Mcqk5H2NtZ1aqFLIDNr5y0rUADzKuVLU_W-mPB9SJR5u0mBsV1NzzAR4spDpdMNg/exec";
+
+        // DATA SISWA KELAS X-10[cite: 1]
+        const siswaList = [
+            { id: "S001", no: 1, nis: "2627100003/", nama: "ABITIA RAHMAN", lp: "L" },
+            { id: "S002", no: 2, nis: "2627100013/", nama: "AKHMAD ROFIQ", lp: "L" },
+            { id: "S003", no: 3, nis: "2627100022/", nama: "ALISHA SHALSHABILA", lp: "P" },
+            { id: "S004", no: 4, nis: "2627100024/", nama: "ALLIA RAHAYU", lp: "P" },
+            { id: "S005", no: 5, nis: "2627100032/", nama: "AMANDA FEBRIYANTI", lp: "P" },
+            { id: "S006", no: 6, nis: "2627100052/", nama: "ANNISA NURDIANA INDAH", lp: "P" },
+            { id: "S007", no: 7, nis: "2627100071/", nama: "AUREL ANASTACIA BORU NAIBAHO", lp: "P" },
+            { id: "S008", no: 8, nis: "2627100084/", nama: "BISMAKA RADITYA KAPINDHO", lp: "L" },
+            { id: "S009", no: 9, nis: "2627100097/", nama: "CINTARA ATAFUNISYA", lp: "P" },
+            { id: "S010", no: 10, nis: "2627100112/", nama: "DESVITA REGINA PUTRI", lp: "P" },
+            { id: "S011", no: 11, nis: "2627100116/", nama: "DEWI PUTRI SYAGINA", lp: "P" },
+            { id: "S012", no: 12, nis: "2627100131/", nama: "DINDA APRILLYANA", lp: "P" },
+            { id: "S013", no: 13, nis: "2627100138/", nama: "DWI AYUNINGTYAS", lp: "P" },
+            { id: "S014", no: 14, nis: "2627100139/", nama: "DZAKIRA TALITA ZAHRAN", lp: "P" },
+            { id: "S015", no: 15, nis: "2627100148/", nama: "FAHIRA NURMAULIDA", lp: "P" },
+            { id: "S016", no: 16, nis: "2627100150/", nama: "FAHRIZAL WAHYUDIN", lp: "L" },
+            { id: "S017", no: 17, nis: "2627100158/", nama: "FAUZAN AGUNG PRATAMA", lp: "L" },
+            { id: "S018", no: 18, nis: "2627100161/", nama: "FERONIKA DWIYANTI SILABAN", lp: "P" },
+            { id: "S019", no: 19, nis: "2627100167/", nama: "FRANSISKUS NUWEL RAFHIDO MANIK", lp: "L" },
+            { id: "S020", no: 20, nis: "2627100186/", nama: "HIRZAN NAZHIR MUZHAFFAR", lp: "L" },
+            { id: "S021", no: 21, nis: "2627100194/", nama: "IRENE JESICA EMOR", lp: "P" },
+            { id: "S022", no: 22, nis: "2627100219/", nama: "KENNY DWI PUSPITA", lp: "P" },
+            { id: "S023", no: 23, nis: "2627100245/", nama: "MARIANI SRIREJEKI SITANGGANG", lp: "P" },
+            { id: "S024", no: 24, nis: "2627100250/", nama: "MAULIDA EKA PUTRI", lp: "P" },
+            { id: "S025", no: 25, nis: "2627100252/", nama: "MEISYA PUTRI FAKHRIZY", lp: "P" },
+            { id: "S026", no: 26, nis: "2627100261/", nama: "MUHAMAD FABIAN ALFAIZI", lp: "L" },
+            { id: "S027", no: 27, nis: "2627100272/", nama: "MUHAMAD RIZKY RAMADHAN", lp: "L" },
+            { id: "S028", no: 28, nis: "2627100281/", nama: "MUHAMMAD FAIRUS SALAM", lp: "L" },
+            { id: "S029", no: 29, nis: "2627100300/", nama: "NABILA KHOERUNNISA", lp: "P" },
+            { id: "S030", no: 30, nis: "2627100303/", nama: "NADYA AYU NURASYFA", lp: "P" },
+            { id: "S031", no: 31, nis: "2627100309/", nama: "NAIZAR ALDANRICO NUGRAHA", lp: "L" },
+            { id: "S032", no: 32, nis: "2627100314/", nama: "NAOMI YULISTINA SIREGAR", lp: "P" },
+            { id: "S033", no: 33, nis: "2627100338/", nama: "OKTAVIANI CAHYA PUTRI", lp: "P" },
+            { id: "S034", no: 34, nis: "2627100344/", nama: "PUTRI AINUR ROHMAH", lp: "P" },
+            { id: "S035", no: 35, nis: "2627100358/", nama: "RAHMAT DIPRAJA SOPYAN", lp: "L" },
+            { id: "S036", no: 36, nis: "2627100374/", nama: "REIFAN FAHRIZAL", lp: "L" },
+            { id: "S037", no: 37, nis: "2627100387/", nama: "RIDWAN AHLAN MUZAKKI", lp: "L" },
+            { id: "S038", no: 38, nis: "2627100409/", nama: "SAKILA NOVITA NURAINI", lp: "P" },
+            { id: "S039", no: 39, nis: "2627100426/", nama: "SHAFIQA ANANDA MALIK", lp: "P" },
+            { id: "S040", no: 40, nis: "2627100427/", nama: "SHAFIRA AUROLLA WIJAYA KUSUMAH", lp: "P" },
+            { id: "S041", no: 41, nis: "2627100430/", nama: "SHINTA MULYANI", lp: "P" },
+            { id: "S042", no: 42, nis: "2627100439/", nama: "SITI NURAZIZAH", lp: "P" },
+            { id: "S043", no: 43, nis: "2627100446/", nama: "SYAKILLA NURVIANTI", lp: "P" },
+            { id: "S044", no: 44, nis: "2627100475/", nama: "WINA KHOERUNNISA", lp: "P" }
+        ];
+
+        const defaultPiket = {
+            "Senin": ["ABITIA RAHMAN", "AKHMAD ROFIQ", "ALISHA SHALSHABILA", "ALLIA RAHAYU", "AMANDA FEBRIYANTI", "ANNISA NURDIANA INDAH", "AUREL ANASTACIA BORU NAIBAHO", "BISMAKA RADITYA KAPINDHO"],
+            "Selasa": ["RIDWAN AHLAN MUZAKKI", "SAKILA NOVITA NURAINI", "SHAFIQA ANANDA MALIK", "SHAFIRA AUROLLA WIJAYA KUSUMAH", "SHINTA MULYANI", "SITI NURAZIZAH", "SYAKILLA NURVIANTI", "WINA KHOERUNNISA"],
+            "Rabu": ["FRANSISKUS NUWEL RAFHIDO MANIK", "HIRZAN NAZHIR MUZHAFFAR", "IRENE JESICA EMOR", "KENNY DWI PUSPITA", "MARIANI SRIREJEKI SITANGGANG", "MAULIDA EKA PUTRI", "MEISYA PUTRI FAKHRIZY", "MUHAMAD FABIAN ALFAIZI", "MUHAMAD RIZKY RAMADHAN"],
+            "Kamis": ["CINTARA ATAFUNISYA", "DESVITA REGINA PUTRI", "DEWI PUTRI SYAGINA", "DINDA APRILLYANA", "DWI AYUNINGTYAS", "DZAKIRA TALITA ZAHRAN", "FAHIRA NURMAULIDA", "FAHRIZAL WAHYUDIN", "FAUZAN AGUNG PRATAMA", "FERONIKA DWIYANTI SILABAN"],
+            "Jum'at": ["MUHAMMAD FAIRUS SALAM", "NABILA KHOERUNNISA", "NADYA AYU NURASYFA", "NAIZAR ALDANRICO NUGRAHA", "NAOMI YULISTINA SIREGAR", "OKTAVIANI CAHYA PUTRI", "PUTRI AINUR ROHMAH", "RAHMAT DIPRAJA SOPYAN", "REIFAN FAHRIZAL"]
+        };
+
+        const defaultJadwal = {
+            "Senin": ["Cultural Arts", "Sundanese Language", "Indonesian Language", "Geography"],
+            "Selasa": ["Guidance and Counseling", "Biology", "Mathematics", "Physical Education Sports, and Health"],
+            "Rabu": ["Economics", "Pancasila Education", "Mathematics", "Chemistry"],
+            "Kamis": ["Indonesian Language", "Physics", "History", "Informatics"],
+            "Jum'at": ["English Language", "Sociology", "Islamic Religious Education and Character Education"]
+        };
+
+        let currentLoggedUser = "";
+
+        function renderAnggota(data = siswaList) {
+            document.getElementById('anggota-table-body').innerHTML = data.map(s => `
+                <tr class="hover:bg-garden-50/50">
+                    <td class="p-4 font-medium text-gray-500">${s.no}</td>
+                    <td class="p-4 font-mono text-xs text-garden-700">${s.nis}</td>
+                    <td class="p-4 font-semibold text-garden-900">${s.nama}</td>
+                    <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${s.lp === 'L' ? 'bg-blue-50 text-blue-700' : 'bg-pink-50 text-pink-700'}">${s.lp}</span></td>
+                </tr>
+            `).join('');
+        }
+        window.filterAnggota = function() {
+            const kw = document.getElementById('search-anggota').value.toLowerCase();
+            renderAnggota(siswaList.filter(s => s.nama.toLowerCase().includes(kw) || s.nis.toLowerCase().includes(kw)));
+        }
+
+        window.loadPiket = async function() {
+            let piketData = { ...defaultPiket };
+            try {
+                const snap = await getDocs(collection(db, "jadwal_piket"));
+                snap.forEach(d => { if(d.data().anggota) piketData[d.id] = d.data().anggota; });
+            } catch(e) {}
+            
+            document.getElementById('piket-container').innerHTML = ["Senin", "Selasa", "Rabu", "Kamis", "Jum'at"].map(hari => `
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-garden-200">
+                    <h4 class="font-serif font-bold text-lg text-garden-900 mb-4 pb-3 border-b">${hari}</h4>
+                    <ul class="space-y-2">
+                        ${(piketData[hari] || []).map(m => `<li class="text-xs font-medium text-gray-700 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-garden-500"></span>${m}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+        window.loadJadwal = async function() {
+            let jadwalData = { ...defaultJadwal };
+            try {
+                const snap = await getDocs(collection(db, "jadwal_pelajaran"));
+                snap.forEach(d => { if(d.data().mapel) jadwalData[d.id] = d.data().mapel; });
+            } catch(e) {}
+
+            document.getElementById('jadwal-container').innerHTML = ["Senin", "Selasa", "Rabu", "Kamis", "Jum'at"].map(hari => `
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-garden-200">
+                    <h4 class="font-serif font-bold text-lg text-garden-900 mb-4 pb-3 border-b">${hari}</h4>
+                    <ol class="space-y-2 list-decimal list-inside">
+                        ${(jadwalData[hari] || []).map(m => `<li class="text-xs font-medium text-gray-700 py-1"><span class="font-semibold text-garden-800">${m}</span></li>`).join('')}
+                    </ol>
+                </div>
+            `).join('');
+        }
+
+        window.loadGaleri = async function() {
+            let html = `
+                <div class="bg-white rounded-3xl overflow-hidden border border-garden-200 shadow-sm p-4">
+                    <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=500" alt="Taman" class="h-48 w-full object-cover rounded-2xl mb-4">
+                    <h4 class="font-bold text-garden-900">Merawat Taman Kelas X-10</h4>
+                    <p class="text-xs text-gray-500 mt-1">Kegiatan gotong royong merawat tanaman.</p>
+                </div>
+            `;
+            try {
+                const snap = await getDocs(collection(db, "galeri_kelas"));
+                snap.forEach(d => {
+                    const g = d.data();
+                    html += `
+                        <div class="bg-white rounded-3xl overflow-hidden border border-garden-200 shadow-sm p-4">
+                            <img src="${g.url}" alt="${g.title}" class="h-48 w-full object-cover rounded-2xl mb-4" onerror="this.src='https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=500'">
+                            <h4 class="font-bold text-garden-900">${g.title}</h4>
+                            <p class="text-xs text-gray-500 mt-1">${g.desc}</p>
+                        </div>
+                    `;
+                });
+            } catch(e) {}
+            document.getElementById('galeri-grid').innerHTML = html;
+        }
+
+        window.loadTugas = async function() {
+            try {
+                const snap = await getDocs(collection(db, "tugas_x10"));
+                let html = "";
+                snap.forEach(d => {
+                    const t = d.data();
+                    html += `
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-garden-200">
+                            <span class="px-3 py-1 bg-garden-100 text-garden-700 text-xs font-bold rounded-full">${t.mapel}</span>
+                            <h4 class="font-serif font-bold text-lg text-garden-900 mt-3">${t.deskripsi}</h4>
+                            <p class="text-xs text-gray-500 mt-2">⏰ Deadline: <span class="font-semibold text-red-600">${t.deadline}</span></p>
+                        </div>
+                    `;
+                });
+                document.getElementById('tugas-list').innerHTML = html || `<div class="bg-white p-6 rounded-3xl text-center text-gray-500 text-xs col-span-2">Belum ada tugas aktif.</div>`;
+            } catch(e) {}
+        }
+
+        // LOAD KAS DAN SALDO PERSONAL SISWA
+        window.loadKasData = async function() {
+            const tbody = document.getElementById('kas-table-body');
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-gray-500">Memuat transaksi dari Spreadsheet...</td></tr>`;
+
+            try {
+                const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getTransactions`);
+                const rows = await res.json();
+                const data = rows.slice(1);
+
+                let totalSaldoGlobal = 0;
+                let myPersonalTotal = 0;
+                let myTransactionsHTML = "";
+
+                tbody.innerHTML = data.map(r => {
+                    const studentName = r[2] || "";
+                    const amount = Number(r[4] || 0);
+                    const type = r[3] || "";
+                    const desc = r[5] || "";
+                    const dateStr = r[6] ? new Date(r[6]).toLocaleDateString('id-ID') : '-';
+
+                    if(type === "Iuran Kas" || type === "Masuk") totalSaldoGlobal += amount;
+                    else totalSaldoGlobal -= amount;
+
+                    if (currentLoggedUser !== "ADMIN" && studentName.toUpperCase() === currentLoggedUser.toUpperCase()) {
+                        if(type === "Iuran Kas" || type === "Masuk") myPersonalTotal += amount;
+                        myTransactionsHTML += `
+                            <div class="flex justify-between items-center bg-white/10 px-3 py-2 rounded-xl border border-white/10">
+                                <div>
+                                    <span class="font-semibold block text-white">${desc}</span>
+                                    <span class="text-[10px] text-garden-200">${dateStr}</span>
+                                </div>
+                                <span class="font-bold text-amber-300 font-mono">+ Rp ${amount.toLocaleString('id-ID')}</span>
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <tr class="hover:bg-garden-50/50">
+                            <td class="p-3 text-xs text-gray-500">${dateStr}</td>
+                            <td class="p-3 font-semibold text-garden-900">${studentName}</td>
+                            <td class="p-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${type.includes('Kas') || type === 'Masuk' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}">${type}</span></td>
+                            <td class="p-3 font-bold text-gray-800">Rp ${amount.toLocaleString('id-ID')}</td>
+                            <td class="p-3 text-xs text-gray-600">${desc}</td>
+                            <td class="p-3 text-right font-mono text-xs font-bold text-garden-700">Rp ${Number(r[8] || totalSaldoGlobal).toLocaleString('id-ID')}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('kas-total-saldo').innerText = `Rp ${totalSaldoGlobal.toLocaleString('id-ID')}`;
+
+                if (currentLoggedUser !== "ADMIN") {
+                    document.getElementById('personal-dashboard').classList.remove('hidden');
+                    document.getElementById('personal-student-name').innerText = currentLoggedUser;
+                    document.getElementById('personal-total-paid').innerText = `Rp ${myPersonalTotal.toLocaleString('id-ID')}`;
+                    document.getElementById('personal-history-container').innerHTML = myTransactionsHTML || `<p class="text-garden-200 italic">Belum ada catatan iuran kas atas nama Anda.</p>`;
+                } else {
+                    document.getElementById('personal-dashboard').classList.add('hidden');
+                }
+
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-red-500">Gagal memuat data kas dari Spreadsheet.</td></tr>`;
+            }
+        }
+
+        window.loadAbsenData = function() {
+            document.getElementById('absen-table-body').innerHTML = siswaList.slice(0, 10).map((s, idx) => `
+                <tr>
+                    <td class="p-4 text-gray-500">${idx + 1}</td>
+                    <td class="p-4 font-semibold text-garden-900">${s.nama}</td>
+                    <td class="p-4"><span class="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold">Hadir</span></td>
+                    <td class="p-4"><button class="text-xs text-garden-600 font-semibold hover:underline">Ubah</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // LOGIN SYSTEM
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('login-name').value.trim().toUpperCase();
+            const pass = document.getElementById('login-pass').value;
+
+            const isAdmin = (name === "ADMIN" && pass === "adminx10");
+            const isValidStudent = siswaList.some(s => s.nama === name) && pass === "x10juara";
+
+            if (isAdmin || isValidStudent) {
+                currentLoggedUser = name;
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('user-greeting').innerText = `👋 Halo, ${name}`;
+
+                if(isAdmin) {
+                    document.getElementById('admin-menu-btn').classList.remove('hidden');
+                    document.getElementById('admin-menu-btn-mob').classList.remove('hidden');
+                    document.getElementById('admin-kas-student').innerHTML = siswaList.map(s => `<option value="${s.id}|${s.nama}">${s.no}. ${s.nama}</option>`).join('');
+                }
+
+                renderAnggota();
+                loadPiket();
+                loadJadwal();
+                loadGaleri();
+                loadTugas();
+                loadKasData();
+                loadAbsenData();
+            } else {
+                const err = document.getElementById('login-error');
+                err.classList.remove('hidden');
+                err.innerText = "Nama lengkap atau password salah!";
+            }
+        });
+
+        window.logout = function() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+            currentLoggedUser = "";
+        }
+
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+        }
+
+        // ADMIN FORM SUBMITS
+        document.getElementById('admin-kas-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-kas');
+            btn.innerText = "Mengirim...";
+            btn.disabled = true;
+
+            const [studentId, studentName] = document.getElementById('admin-kas-student').value.split('|');
+            const type = document.getElementById('admin-kas-type').value;
+            const amount = Number(document.getElementById('admin-kas-amount').value);
+            const desc = document.getElementById('admin-kas-desc').value;
+            const date = document.getElementById('admin-kas-date').value;
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ studentId, studentName, type, amount, desc, date, totalPaid: amount })
+                });
+
+                alert("Transaksi kas berhasil dicatat ke Spreadsheet!");
+                document.getElementById('admin-kas-form').reset();
+                document.getElementById('admin-kas-date').valueAsDate = new Date();
+                loadKasData();
+                switchTab('kas');
+            } catch(err) {
+                alert("Gagal: " + err.message);
+            } finally {
+                btn.innerText = "Simpan ke Spreadsheet 📊";
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('admin-jadwal-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const hari = document.getElementById('admin-jadwal-hari').value;
+            const mapelArr = document.getElementById('admin-jadwal-mapel').value.split(',').map(m => m.trim()).filter(Boolean);
+            await setDoc(doc(db, "jadwal_pelajaran", hari), { mapel: mapelArr });
+            alert("Jadwal pelajaran diperbarui!");
+            loadJadwal();
+        });
+
+        // UPLOAD GALERI LANGSUNG DARI FILE / GALERI HP
+        document.getElementById('admin-galeri-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-upload-galeri');
+            btn.innerText = "Mengunggah Foto...";
+            btn.disabled = true;
+
+            const title = document.getElementById('admin-galeri-title').value;
+            const desc = document.getElementById('admin-galeri-desc').value;
+            const file = document.getElementById('admin-galeri-file').files[0];
+
+            try {
+                const storageRef = ref(storage, 'galeri/' + Date.now() + '_' + file.name);
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                await addDoc(collection(db, "galeri_kelas"), {
+                    title: title,
+                    url: downloadURL,
+                    desc: desc,
+                    timestamp: new Date()
+                });
+
+                alert("Foto berhasil di-upload ke Galeri!");
+                document.getElementById('admin-galeri-form').reset();
+                loadGaleri();
+                switchTab('galeri');
+            } catch(err) {
+                alert("Gagal mengunggah foto: " + err.message);
+            } finally {
+                btn.innerText = "Upload Foto 📸";
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('admin-tugas-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const mapel = document.getElementById('admin-tugas-mapel').value;
+            const deskripsi = document.getElementById('admin-tugas-desc').value;
+            const deadline = document.getElementById('admin-tugas-deadline').value;
+            await addDoc(collection(db, "tugas_x10"), { mapel, deskripsi, deadline, timestamp: new Date() });
+            if (Notification.permission === "granted") {
+                new Notification(`Tugas Baru: ${mapel}`, { body: `${deskripsi} (Deadline: ${deadline})` });
+            }
+            alert("Tugas dipublikasikan & notifikasi terkirim!");
+            document.getElementById('admin-tugas-form').reset();
+            loadTugas();
+            switchTab('tugas');
+        });
+
+        window.requestNotificationPermission = function() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") alert("Notifikasi HP aktif!");
+                });
+            }
+        }
+
+        document.getElementById('admin-kas-date').valueAsDate = new Date();
+        document.getElementById('absen-date').valueAsDate = new Date();
+    </script>
+</body>
+</html>

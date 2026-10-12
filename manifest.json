@@ -1,0 +1,21 @@
+{
+  "name": "Kelas X-10 SMAN 2 Cikampek",
+  "short_name": "X-10 Garden",
+  "description": "Website & Aplikasi Resmi Kelas X-10 Garden SMAN 2 Cikampek",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a2e1f",
+  "theme_color": "#3a6246",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/628/628283.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/628/628283.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
